@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,10 +18,21 @@ type httpClient struct {
 }
 
 func (hc httpClient) Do(req *http.Request) (*http.Response, error) {
+	time.Sleep(500 * time.Millisecond)
+
+	if req.URL.String() == "https://dog.ceo/api/breed/terrier/list" {
+		time.Sleep(time.Second)
+		return &http.Response{
+			StatusCode: http.StatusInternalServerError,
+			Body:       ioutil.NopCloser(bytes.NewBuffer([]byte{})),
+		}, nil
+	}
 	return hc.client.Do(req)
 }
 
 func main() {
+	fmt.Println("Executing")
+
 	client := repository.Client{
 		HTTPClient: httpClient{
 			client: *http.DefaultClient,

@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type fetcher interface {
@@ -18,20 +21,33 @@ func process(ctx context.Context, client fetcher) ([]string, error) {
 		return result, fmt.Errorf("failed to fetch the breeds: %w", err)
 	}
 
-	for _, breed := range breeds {
-		subBreeds, err := client.SubBreeds(ctx, breed)
-		if err != nil {
-			return result, fmt.Errorf("failed while fetching the sub-breeds of '%s': %w", breed, err)
-		}
+	var (
+		g, gctx = errgroup.WithContext(ctx)
+		mutex   sync.Mutex
+	)
 
-		if len(subBreeds) == 0 {
-			result = append(result, breed)
-		} else {
-			for _, subBreed := range subBreeds {
-				result = append(result, fmt.Sprintf("%s/%s", breed, subBreed))
+	for _, breed := range breeds {
+		breed := breed
+		g.Go(func() error {
+			subBreeds, err := client.SubBreeds(gctx, breed)
+			if err != nil {
+				return fmt.Errorf("failed while fetching the sub-breeds of '%s': %w", breed, err)
 			}
-		}
+
+			mutex.Lock()
+			defer mutex.Unlock()
+
+			if len(subBreeds) == 0 {
+				result = append(result, breed)
+			} else {
+				for _, subBreed := range subBreeds {
+					result = append(result, fmt.Sprintf("%s/%s", breed, subBreed))
+				}
+			}
+
+			return nil
+		})
 	}
 
-	return result, nil
+	return result, g.Wait()
 }
