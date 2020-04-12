@@ -1,0 +1,45 @@
+{
+  // go.
+  "go.testFlags": [
+    "trimpath"
+  ],
+  "go.buildFlags": [
+    "trimpath"
+  ],
+  // workbench.
+  "workbench.colorTheme": "Dracula",
+  "workbench.statusBar.visible": false,
+  "workbench.activityBar.visible": false,
+  // editor.
+  "editor.hover.enabled": false,
+  "editor.hover.sticky": true,
+  "editor.fontLigatures": false,
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.fontSize": 13,
+  "editor.quickSuggestions": {
+    "other": false,
+    "comments": false,
+    "strings": false
+  },
+  "editor.autoClosingBrackets": "languageDefined",
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.suggest.showSnippets": false,
+  "editor.snippetSuggestions": "none",
+  "editor.cursorBlinking": "solid",
+  // breadcrumbs.
+  "breadcrumbs.enabled": false,
+  // window.
+  "window.title": "",
+  // terminal.
+  "terminal.explorerKind": "integrated",
+  "terminal.integrated.fontFamily": "JetBrains Mono",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.cursorBlinking": false,
+  "terminal.integrated.shellArgs.osx": [
+    "-P"
+  ],
+  // files.
+  "files.exclude": {
+    ".vscode": true
+  }
+}
